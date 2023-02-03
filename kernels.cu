@@ -1,4 +1,6 @@
 #include "definitions.cuh"
+#include "runConfig.cuh"
+#include "cudaConfig.cuh"
 
 extern __constant__ unsigned long long fastConditions[FAST_MEMORY_CONDITIONS_MAX_COUNT];
 
@@ -41,10 +43,10 @@ __global__ void findSolutions(size_t fastConditionsCount,
 
 __device__ static inline unsigned long long getSymmetricCandidate(const unsigned long long candidateHalf) {
     unsigned long long reversedHalf = 0;
-    for (int i = 0; i < VERTEX_COUNT / 2; ++i) {
-        reversedHalf |= ((candidateHalf >> i) & 1ull) << (VERTEX_COUNT / 2 - i - 1);
+    for (int i = 0; i < (VERTEX_COUNT - 1) / 2; ++i) {
+        reversedHalf |= ((candidateHalf >> i) & 1ull) << ((VERTEX_COUNT - 1) / 2 - i - 1);
     }
-    return (reversedHalf << (VERTEX_COUNT / 2)) | candidateHalf;
+    return (candidateHalf << ((VERTEX_COUNT - 1) / 2)) | reversedHalf;
 }
 
 __global__ void findSymmetricSolutions(unsigned long fastConditionsCount,
@@ -52,9 +54,8 @@ __global__ void findSymmetricSolutions(unsigned long fastConditionsCount,
                                        unsigned long slowConditionsCount,
                                        unsigned long long *solutions_d) {
     const unsigned long long globalThreadIdx = getGlobalThreadIdx();
-    constexpr unsigned long long lastCandidateHalf = (1ull << ((VERTEX_COUNT - 1) / 2)) - 1;
 
-    for (auto candidateHalf = globalThreadIdx; candidateHalf < lastCandidateHalf; candidateHalf += TOTAL_THREADS_COUNT) {
+    for (auto candidateHalf = globalThreadIdx; candidateHalf < SYMMETRIC_SOLUTIONS_END; candidateHalf += TOTAL_THREADS_COUNT) {
         const unsigned long long candidate = getSymmetricCandidate(candidateHalf);
         if (isSolution(fastConditionsCount, candidate, slowConditions, slowConditionsCount)) {
             solutions_d[globalThreadIdx] = candidate;

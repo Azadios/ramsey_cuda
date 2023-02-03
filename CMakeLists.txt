@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(ramsey CUDA CXX)
 set(CMAKE_CUDA_STANDARD 17)
 
-add_executable(ramsey main.cu kernels.cu definitions.cuh utils.cu)
+add_executable(ramsey main.cu kernels.cu utils.cu)
 
 find_package(OpenMP REQUIRED)
 target_compile_options(ramsey PRIVATE -Xcompiler -fopenmp)

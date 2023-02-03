@@ -3,6 +3,8 @@
 using std::vector;
 #include <unistd.h>
 #include "definitions.cuh"
+#include "runConfig.cuh"
+#include "cudaConfig.cuh"
 
 __constant__ unsigned long long fastConditions[FAST_MEMORY_CONDITIONS_MAX_COUNT];
 
@@ -28,11 +30,11 @@ int main() {
 
     cudaEvent_t event;
     cudaEventCreate(&event);
-    std::cout << "Searching for solutions..." << std::endl;
 #if SEARCH_SYMMETRIC_SOLUTIONS
-    findSymmetricSolutions<<<BLOCKS_PER_GRID, THREADS_PER_BLOCK>>>
-            (fastConditionsCount, slowConditions, slowConditionsCount, solutions_d);
+    std::cout << std::endl << "Searching for symmetric solutions..." << std::endl;
+    findSymmetricSolutions<<<BLOCKS_PER_GRID, THREADS_PER_BLOCK>>>(fastConditionsCount, slowConditions, slowConditionsCount, solutions_d);
 #else
+    std::cout << std::endl << "Searching for solutions..." << std::endl;
     findSolutions<<<BLOCKS_PER_GRID, THREADS_PER_BLOCK>>>(fastConditionsCount, slowConditions, slowConditionsCount, solutions_d);
 #endif
     cudaEventRecord(event);

@@ -7,6 +7,8 @@ using std::set;
 #include <fstream>
 #include <functional>
 #include "definitions.cuh"
+#include "runConfig.cuh"
+#include "cudaConfig.cuh"
 
 static set<int> getDifferences(int subgraphVertices[SUBGRAPH_VERTEX_COUNT]) {
     set<int> differences;

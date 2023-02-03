@@ -1,23 +1,12 @@
 #ifndef DEFINITIONS_CUH
 #define DEFINITIONS_CUH
 
-#define FAST_MEMORY_CONDITIONS_MAX_COUNT 8192
-
-#define VERTEX_COUNT 17
-#define SUBGRAPH_VERTEX_COUNT 4
-#define SEARCH_SYMMETRIC_SOLUTIONS false
-
-// only for non symmetric solutions
-#define SOLUTIONS_START (1ull << (VERTEX_COUNT - SUBGRAPH_VERTEX_COUNT))
-#define SOLUTIONS_END ((1ull << (VERTEX_COUNT - 1)) - 1)
-
-#define THREADS_PER_BLOCK 256
-#define BLOCKS_PER_GRID 24
-#define TOTAL_THREADS_COUNT (THREADS_PER_BLOCK * BLOCKS_PER_GRID)
-
-#define SECONDS_BETWEEN_SOLUTION_CHECKS 2
-
 #define SUBCONDITION_FLAG 0x8000000000000000
+
+#include "runConfig.cuh"
+#define SOLUTIONS_START (1ull << (VERTEX_COUNT - SUBGRAPH_VERTEX_COUNT))
+#define SOLUTIONS_END ((1ull << (VERTEX_COUNT - 2)) - 1)
+#define SYMMETRIC_SOLUTIONS_END (SOLUTIONS_END >> (VERTEX_COUNT / 2))
 
 #ifndef cudaCheckError
 #define cudaCheckError()  __cudaCheckError(__FILE__, __LINE__)
